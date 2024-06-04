@@ -1,0 +1,36 @@
+BoxLayout:
+    orientation: 'vertical'
+    padding: 10
+    spacing: 10
+
+    MDToolbar:
+        title: 'Audio Processor'
+        md_bg_color: app.theme_cls.primary_color
+        background_palette: 'Primary'
+        background_hue: '500'
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: [20, 50, 20, 20]
+        spacing: 20
+
+        MDLabel:
+            text: 'Select an audio file to process:'
+            halign: 'center'
+            theme_text_color: 'Primary'
+
+        MDRaisedButton:
+            text: 'Select Audio File'
+            pos_hint: {'center_x': 0.5}
+            on_release: app.select_audio_file()
+
+        MDRaisedButton:
+            text: 'Process Audio'
+            pos_hint: {'center_x': 0.5}
+            on_release: app.process_audio()
+
+        MDLabel:
+            id: status_label
+            text: 'Status:'
+            halign: 'center'
+            theme_text_color: 'Primary'
