@@ -1,49 +1,53 @@
-import socket
+import requests
+import base64
+import time
 
-def read_file(filename):
-    with open(filename, 'rb') as f:
-        data = f.read()
-    return data
+BASE_URL = 'http://localhost:5000/api'
 
-def write_file(filename, data):
-    with open(filename, 'wb') as f:
-        f.write(data)
-
-def main():
-    host = '127.0.0.1'
-    port = 8777
-    input_filename = 'input.mp3'
-    output_filename = 'output.mp3'
-
-    data = read_file(input_filename)
-
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((host, port))
-
-    # Enviar datos al servidor en chunks de 1024 bytes
-    chunk_size = 1024
-    for i in range(0, len(data), chunk_size):
-        end = min(i + chunk_size, len(data))
-        chunk = data[i:end]
-        s.sendall(chunk)
-    print("Audio data sent successfully!")
-
-    # Recibir datos procesados del servidor en chunks de 1024 bytes
-    received_data = bytearray()
-    while True:
+def send_audio(file_path, max_retries=3):
+    with open(file_path, 'rb') as audio_file:
+        audio_data = base64.b64encode(audio_file.read()).decode('utf-8')
+    
+    for attempt in range(max_retries):
         try:
-            packet = s.recv(1024)
-            if not packet:
-                break
-            received_data.extend(packet)
-        except socket.error as e:
-            print(f"Socket error: {e}")
-            break
+            response = requests.post(f'{BASE_URL}/enviar_audio', json={'audio': audio_data})
+            response.raise_for_status()
+            print('Audio sent successfully')
+            return
+        except requests.exceptions.RequestException as e:
+            print(f'Attempt {attempt + 1} failed: {e}')
+            if attempt < max_retries - 1:
+                time.sleep(2)
+            else:
+                print('Failed to send audio after several attempts')
+                raise
 
-    print("Processed audio data received successfully!")
-    write_file(output_filename, received_data)
-    s.close()
+def receive_audio(output_file_path, max_retries=3):
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(f'{BASE_URL}/recibir_audio')
+            response.raise_for_status()
+            audio_data = response.json().get('audio')
+            if audio_data:
+                with open(output_file_path, 'wb') as audio_file:
+                    audio_file.write(base64.b64decode(audio_data))
+                print('Audio received and saved successfully')
+                return
+            else:
+                print('No audio data found in the response')
+                return
+        except requests.exceptions.RequestException as e:
+            print(f'Attempt {attempt + 1} failed: {e}')
+            if attempt < max_retries - 1:
+                time.sleep(2)
+            else:
+                print('Failed to receive audio after several attempts')
+                raise
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    input_audio_file = 'input.mp3'
+    output_audio_file = 'output.mp3'
+    
+    send_audio(input_audio_file)
+    receive_audio(output_audio_file)
 

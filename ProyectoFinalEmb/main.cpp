@@ -46,9 +46,10 @@ void write_file(const char* filename, const std::vector<unsigned char>& data) {
 }
 
 int main() {
+    while(1){
     try {
         // Listen on all interfaces
-        AudioSocket audioSocket("127.0.0.1", 8777);
+        AudioSocket audioSocket("0.0.0.0", 8777);
         std::vector<unsigned char> input_data;
         std::vector<unsigned char> chunk;
         size_t total_bytes_received = 0;
@@ -102,10 +103,10 @@ int main() {
         // Apply effects
         std::vector<float> output(input.size());
         // Uncomment one of the following lines to apply a specific effect
-        // apply_delay(input, output, 0.01f, 0.01f, 0.2f);
-        // apply_reverb(input, output, 0.5f, 0.5f, 0.5f);
-        // apply_tremolo(input, output, 5.0f, 0.5f);
-        apply_chorus(input, output, 0.025f, 0.002f, 1.0f);
+        //apply_delay(input, output, 0.08f, 0.08f, 0.2f);
+        apply_reverb(input, output, 0.8f, 0.5f, 0.5f);
+        //apply_tremolo(input, output, 5.0f, 0.5f);
+        //apply_chorus(input, output, 0.025f, 0.002f, 1.0f);
 
         // Encode output to MP3
         lame_t lame = lame_init();
@@ -149,7 +150,7 @@ int main() {
     } catch (std::exception& e) {
         std::cerr << "Exception: " << e.what() << std::endl;
     }
-
+    }
     return 0;
 }
 
