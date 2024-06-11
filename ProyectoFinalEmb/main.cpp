@@ -11,9 +11,25 @@
 #include "audio_socket.h"
 #include <fstream>
 #include "client_socket.h"
+#include <chrono>
 
 const char* input_filename = "input.mp3";
 const char* output_filename = "output.mp3";
+
+
+
+// Función para el bloque de inicio de la medición de tiempo
+auto start_timer() {
+    return std::chrono::high_resolution_clock::now();
+}
+
+// Función para el bloque de fin de la medición de tiempo y cálculo del tiempo transcurrido
+template <typename TimePoint>
+void end_timer(TimePoint start) {
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+    std::cout << "Tiempo transcurrido: " << duration << " microsegundos" << std::endl;
+}
 
 void apply_reverb(const std::vector<float>& input, std::vector<float>& output, float room_size, float damping, float width) {
     Reverb reverb(room_size, damping, width);
