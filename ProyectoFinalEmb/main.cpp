@@ -10,6 +10,7 @@
 #include "chorus.h"
 #include "audio_socket.h"
 #include <fstream>
+#include "client_socket.h"
 
 const char* input_filename = "input.mp3";
 const char* output_filename = "output.mp3";
@@ -50,14 +51,13 @@ int main() {
     try {
         // Listen on all interfaces
         AudioSocket audioSocket("0.0.0.0", 8777);
-        AudioSocket pingSocket("192.168.0.25", 8666); //nuevo socket
+        ClientSocket client("192.168.0.25", 8666);
         std::vector<unsigned char> input_data;
         std::vector<unsigned char> chunk;
         size_t total_bytes_received = 0;
         
         std::string msg = "get_inputs";
-        
-        char var_socket[4]; // Variable para almacenar el nuevo dato del socket
+        std::string var_socket = "0000";
         
         
         
@@ -78,16 +78,19 @@ int main() {
         write_file(input_filename, input_data);
         
         
-        // CODIGO NUEVO PARA LA LECTURA
-        pingSocket.sendString(msg);
-        size_t bytes_read_sock = pingSocket.receive().size();
-        if (bytes_read_sock != 4) {
-            std::cerr << "Failed to receive 4 bytes of data" << std::endl;
-            continue;
-        }
+        // Send message to Pi
+        if (client.connectToServer()) {
+            std::cout << "Conectado al servidor" << std::endl;
+            
+            client.sendMessage("get_inputs");
+            std::string response = client.receiveMessage();
+            std::cout << "Mensaje recibido del servidor: " << response << std::endl;
 
-        std::memcpy(var_socket, pingSocket.receive().data(), 4);
-        std::cout << "Received string from Pi: " << std::string(var_socket, 4) << std::endl;
+            var_socket = response;
+
+        } else {
+            std::cerr << "Error al conectar con el servidor" << std::endl;
+        }
  
 
         // Initialize mpg123
