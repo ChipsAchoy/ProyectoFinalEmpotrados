@@ -63,6 +63,7 @@ int main(int argc, char const *argv[]){
             perror("Error al aceptar la conexión");
             return 1;
         }
+        printf("Conexión aceptada\n");
 
         // Leer el mensaje del socket
         valread = read(new_socket, buffer, BUF_SIZE);
@@ -75,16 +76,19 @@ int main(int argc, char const *argv[]){
         
         // Enviar el estado de las entradas GPIO 2 a 5 si se solicita
         if (strcmp(buffer, "get_inputs") == 0) {
+            printf("Enviando Inputs GPIO\n");
             char input_states[4] = {0};
             
             for (unsigned int pin = 2; pin <= 5; ++pin) {
-                input_states[pin - 2] = gpioRead(pin);
-            }
-
+                
+                input_states[pin - 2] = gpioRead(pin) + '0';
+            }   
+            
             send(new_socket, input_states, strlen(input_states), 0);
         }
         
-        
+        printf("Mensaje Enviado\n");
+
         // Cerrar el socket
         close(new_socket);
     }

@@ -50,7 +50,7 @@ int main() {
     try {
         // Listen on all interfaces
         AudioSocket audioSocket("0.0.0.0", 8777);
-        AudioSocket pingSocket("0.0.0.0", 8666); //nuevo socket
+        AudioSocket pingSocket("192.168.0.25", 8666); //nuevo socket
         std::vector<unsigned char> input_data;
         std::vector<unsigned char> chunk;
         size_t total_bytes_received = 0;
@@ -61,9 +61,6 @@ int main() {
         
         
         
-        std::memcpy(var_socket, pingSocket.receive().data(), 4);
-        std::cout << "Received string from Pi: " << std::string(var_socket, 4) << std::endl;
- 
 
         // Receive audio data in chunks of 1024 bytes
         std::cout << "Waiting for audio data" << std::endl;
@@ -88,6 +85,10 @@ int main() {
             std::cerr << "Failed to receive 4 bytes of data" << std::endl;
             continue;
         }
+
+        std::memcpy(var_socket, pingSocket.receive().data(), 4);
+        std::cout << "Received string from Pi: " << std::string(var_socket, 4) << std::endl;
+ 
 
         // Initialize mpg123
         mpg123_init();
