@@ -1,0 +1,83 @@
+Screen:
+
+    AnchorLayout:
+        anchor_x: 'center'
+        anchor_y: 'center'
+
+        MDBoxLayout:
+            orientation: 'vertical'
+            size_hint_y: None  # Ensure the height is fixed
+            height: self.minimum_height  # Set height equal to its minimum height
+            gravity: 'center'
+            spacing: 40
+        
+            MDButton:
+                id: Upload
+                style: "elevated"
+                size_hint_y: None
+                height: "48dp"
+                pos_hint: {'center_x': 0.5}
+                on_release: app.select_audio_file()
+
+                MDButtonIcon:
+                    icon: "plus"
+                MDButtonText:
+                    text: "Select Audio File"
+
+            MDBoxLayout:
+                orientation: 'horizontal'  # Place buttons horizontally
+                size_hint: None, None  
+                height: "48dp"  # Set a fixed height for the MDBoxLayout
+                spacing: 20
+                pos_hint: {'center_x': 0.28} 
+            
+                MDButton:
+                    id: Process
+                    size_hint_x: None
+                    width: "200dp"  
+                    on_release: app.process_audio()
+                    MDButtonText:
+                        text: "Process Selected Audio File"
+                MDButton:
+                    id: ListenO
+                    size_hint_x: None
+                    width: "200dp"  # Set a fixed width for the button
+                    on_release: app.play_audio(app.selected_file)
+                    disabled: True
+                    MDButtonText:
+                        text: "Play Selected Audio"
+            
+
+            MDBoxLayout:
+                orientation: 'horizontal'  # Place buttons horizontally
+                size_hint: None, None  
+                height: "48dp"  # Set a fixed height for the MDBoxLayout
+                spacing: 20
+                pos_hint: {'center_x': 0.4} 
+            
+                MDButton:
+                    id: Save
+                    size_hint_y: None
+                    height: "48dp"
+                    pos_hint: {'center_x': 0.5}
+                    disabled: True
+                    MDButtonText:
+                        text: 'Save Audio'
+
+                MDButton:
+                    id: ListenO
+                    size_hint_x: None
+                    width: "200dp"  # Set a fixed width for the button
+                    on_release: app.play_audio(app.selected_file) #AQUI HAY QUE AGREGAR QUE SUENE EL AUDIO PARSEADO
+                    disabled: True
+                    MDButtonText:
+                        text: "Play Modified Audio"
+
+            MDLabel:
+                id:status_label
+                size_hint_x: None
+                pos_hint: {'center_x': 0.5}
+                theme_text_color: "Custom"
+                text_color: "white"
+                text:"Waiting for an audio file..."
+
