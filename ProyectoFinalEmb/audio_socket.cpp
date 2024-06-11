@@ -17,3 +17,6 @@ std::vector<unsigned char> AudioSocket::receive() {
     return data;
 }
 
+void AudioSocket::sendString(const std::string& data) {
+    boost::asio::write(socket_, boost::asio::buffer(data));
+}

@@ -10,6 +10,7 @@ public:
     AudioSocket(const std::string& host, unsigned short port);
     void send(const std::vector<unsigned char>& data);
     std::vector<unsigned char> receive();
+    void sendString(const std::string& data);
 
 private:
     std::string host_;

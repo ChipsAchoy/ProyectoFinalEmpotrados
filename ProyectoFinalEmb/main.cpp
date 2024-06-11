@@ -55,13 +55,12 @@ int main() {
         std::vector<unsigned char> chunk;
         size_t total_bytes_received = 0;
         
+        std::string msg = "get_inputs";
+        
         char var_socket[4]; // Variable para almacenar el nuevo dato del socket
-        // CODIGO NUEVO PARA LA LECTURA
-        size_t bytes_read_sock = pingSocket.receive().size();
-        if (bytes_read_sock != 4) {
-            std::cerr << "Failed to receive 4 bytes of data" << std::endl;
-            continue;
-        }
+        
+        
+        
         std::memcpy(var_socket, pingSocket.receive().data(), 4);
         std::cout << "Received string from Pi: " << std::string(var_socket, 4) << std::endl;
  
@@ -80,6 +79,15 @@ int main() {
         }
         std::cout << "Total audio data received: " << total_bytes_received << " bytes" << std::endl;
         write_file(input_filename, input_data);
+        
+        
+        // CODIGO NUEVO PARA LA LECTURA
+        pingSocket.sendString(msg);
+        size_t bytes_read_sock = pingSocket.receive().size();
+        if (bytes_read_sock != 4) {
+            std::cerr << "Failed to receive 4 bytes of data" << std::endl;
+            continue;
+        }
 
         // Initialize mpg123
         mpg123_init();
