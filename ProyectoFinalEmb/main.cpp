@@ -50,9 +50,21 @@ int main() {
     try {
         // Listen on all interfaces
         AudioSocket audioSocket("0.0.0.0", 8777);
+        AudioSocket pingSocket("0.0.0.0", 8666); //nuevo socket
         std::vector<unsigned char> input_data;
         std::vector<unsigned char> chunk;
         size_t total_bytes_received = 0;
+        
+        char var_socket[4]; // Variable para almacenar el nuevo dato del socket
+        // CODIGO NUEVO PARA LA LECTURA
+        size_t bytes_read_sock = pingSocket.receive().size();
+        if (bytes_read_sock != 4) {
+            std::cerr << "Failed to receive 4 bytes of data" << std::endl;
+            continue;
+        }
+        std::memcpy(var_socket, pingSocket.receive().data(), 4);
+        std::cout << "Received string from Pi: " << std::string(var_socket, 4) << std::endl;
+ 
 
         // Receive audio data in chunks of 1024 bytes
         std::cout << "Waiting for audio data" << std::endl;
@@ -102,11 +114,23 @@ int main() {
 
         // Apply effects
         std::vector<float> output(input.size());
+
         // Uncomment one of the following lines to apply a specific effect
-        //apply_delay(input, output, 0.08f, 0.08f, 0.2f);
-        apply_reverb(input, output, 0.8f, 0.5f, 0.5f);
-        //apply_tremolo(input, output, 5.0f, 0.5f);
-        //apply_chorus(input, output, 0.025f, 0.002f, 1.0f);
+        if (var_socket[3] == '1'){
+           apply_delay(input, output, 0.08f, 0.08f, 0.2f);
+           std::cout << "Delay applied" << std::endl;
+        }else if (var_socket[2] == '1'){
+           apply_reverb(input, output, 0.8f, 0.5f, 0.5f);
+           std::cout << "Reverb applied" << std::endl;
+        }else if (var_socket[1] == '1'){
+           apply_tremolo(input, output, 5.0f, 0.5f);
+           std::cout << "Tremolo applied" << std::endl;
+        }else if (var_socket[0] == '1'){
+           apply_chorus(input, output, 0.025f, 0.002f, 1.0f);
+           std::cout << "Chorus applied" << std::endl;
+        }else {
+           std::copy(input.begin(), input.end(), output.begin()); // Copiar los datos de input a output
+        }
 
         // Encode output to MP3
         lame_t lame = lame_init();
