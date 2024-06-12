@@ -55,20 +55,13 @@ Screen:
                 spacing: 20
                 pos_hint: {'center_x': 0.4} 
             
-                MDButton:
-                    id: Save
-                    size_hint_y: None
-                    height: "48dp"
-                    pos_hint: {'center_x': 0.5}
-                    disabled: True
-                    MDButtonText:
-                        text: 'Save Audio'
+                
 
                 MDButton:
-                    id: ListenO
+                    id: ListenM
                     size_hint_x: None
                     width: "200dp"  # Set a fixed width for the button
-                    on_release: app.play_audio(app.selected_file) #AQUI HAY QUE AGREGAR QUE SUENE EL AUDIO PARSEADO
+                    on_release: app.play_audio("output.mp3") #AQUI HAY QUE AGREGAR QUE SUENE EL AUDIO PARSEADO
                     disabled: True
                     MDButtonText:
                         text: "Play Modified Audio"

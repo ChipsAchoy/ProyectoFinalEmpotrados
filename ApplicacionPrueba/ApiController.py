@@ -2,7 +2,7 @@ import requests
 import base64
 import time
 
-BASE_URL = 'http://ip:5000/api'
+BASE_URL = 'http://localhost:5000/api'
 
 def send_audio(file_path, max_retries=3):
     with open(file_path, 'rb') as audio_file:

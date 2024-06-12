@@ -22,7 +22,7 @@ class AudioProcessorApp(MDApp):
         self.file_manager = MDFileManager(
             exit_manager=self.exit_manager,
             select_path=self.select_path,
-            preview=True
+            ext=['.mp3', '.wav']
         )
         self.selected_file = None
         self.dialog = None
@@ -32,7 +32,7 @@ class AudioProcessorApp(MDApp):
         return Builder.load_file('main.kv')
 
     def select_audio_file(self):
-        self.file_manager.show('/')  # abre el administrador de archivos en la raíz del sistema
+        self.file_manager.show(os.getcwd())  # abre el administrador de archivos en la raíz del sistema
 
     def exit_manager(self, *args):
         self.file_manager.close()
@@ -46,7 +46,6 @@ class AudioProcessorApp(MDApp):
 
     def process_audio(self):
         if not self.selected_file:
-            self.root.ids.Save.disabled = True
             self.root.ids.ListenM.disabled=True
             self.root.ids.ListenO.disabled=True
         
@@ -58,11 +57,10 @@ class AudioProcessorApp(MDApp):
             send_audio(self.selected_file)
             receive_audio(output_file)
             self.root.ids.status_label.text = 'Audio processed successfully!'
-            self.root.ids.Save.disabled = False
+
             self.root.ids.ListenM.disabled=False
         
         except Exception as e:
-            self.root.ids.Save.disabled = True
             self.root.ids.ListenM.disabled=True
         
             self.show_dialog('Error', str(e))
@@ -89,7 +87,7 @@ class AudioProcessorApp(MDApp):
                 )
             )
         self.dialog.open()
-    def play_audio(filename):
+    def play_audio(self,filename):
         sound = SoundLoader.load(filename)
         self.root.ids.status_label.text = 'Reproducing audio!'
         if sound:
