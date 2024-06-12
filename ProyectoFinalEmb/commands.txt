@@ -1,2 +1,1 @@
-g++ main.cpp delay.cpp reverb.cpp tremolo.cpp chorus.cpp audio_socket.cpp client_socket.cpp -lsndfile -lm
-pg123 -lmp3lame -fopenmp -lboost_system -o main 
+g++ main.cpp delay.cpp reverb.cpp tremolo.cpp chorus.cpp audio_socket.cpp client_socket.cpp -lsndfile -lmpg123 -lmp3lame -fopenmp -lboost_system -o main

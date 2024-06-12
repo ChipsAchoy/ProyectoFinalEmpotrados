@@ -25,7 +25,7 @@ void Reverb::init_buffers() {
 
 void Reverb::process(const std::vector<float>& input, std::vector<float>& output) {
     output.resize(input.size());
-    //#pragma omp parallel for
+    #pragma omp parallel for
     for (size_t i = 0; i < input.size(); ++i) {
     	//#pragma omp critical
         output[i] = process_sample(input[i]);

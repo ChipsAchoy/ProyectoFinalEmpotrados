@@ -154,8 +154,11 @@ int main() {
            apply_tremolo(input, output, 5.0f, 0.5f);
            std::cout << "Tremolo applied" << std::endl;
         }else if (var_socket[0] == '1'){
-           apply_chorus(input, output, 0.025f, 0.002f, 1.0f);
-           std::cout << "Chorus applied" << std::endl;
+            auto start = start_timer();
+            apply_chorus(input, output, 0.025f, 0.002f, 1.0f);
+            end_timer(start);
+            std::cout << "Chorus applied" << std::endl;
+            
         }else {
            std::copy(input.begin(), input.end(), output.begin()); // Copiar los datos de input a output
         }
